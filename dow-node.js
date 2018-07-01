@@ -87,9 +87,10 @@ module.exports = function() {
       color.domain(cDomain);
       timeScaleDomain = d3.timeHours(startDate, d3.timeDay.offset(startDate, 1));
       timescale.domain([startDate, d3.timeDay.offset(startDate, 1)]).range([0, cellSize * 24]);
-      var svg = d3.select(this).selectAll('svg').data(data);
-      gEnter = svg.enter().append('svg').merge(svg).attr('width', width).attr('height', height).append('g').attr('transform', "translate(" + weekDayPadding + ", " + paddingDays + ")").attr('class', 'YlOrRd');
-      g = svg.merge(gEnter);
+      var svg = d3.select(this).select('svg')
+      var svgG = svg.selectAll('g.d').data(data);
+      gEnter = svgG.enter().append('g').attr('class', 'd').merge(svg).attr('width', width).attr('height', height).append('g').attr('transform', "translate(" + weekDayPadding + ", " + paddingDays + ")").attr('class', 'YlOrRd');
+      g = svgG.merge(gEnter);
       labelText = g.selectAll('text.day-of-week').data(function(d) {
         return [d];
       });
@@ -98,17 +99,10 @@ module.exports = function() {
         return d.values;
       });
       rect.enter().append('rect').attr('width', cellSize).attr('height', cellSize).attr('x', function(d) {
-        console.log(d)
         return hour(d.key) * cellSize;
-      }).attr('y', 0).on("mouseout", function(d) {
-        d3.select(this).classed("active", false);
-        return d3.select('#tooltip').style("opacity", 0);
-      }).on("mousemove", function(d) {
-        return d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px").style("top", (d3.event.pageY - 32) + "px");
-      }).merge(rect).attr('class', classValue).on("mouseover", function(d) {
-        d3.select('#tooltip').html(tooltipTemplate.call(this, d)).style("opacity", 1);
-        return d3.select(this).classed("active", true);
-      });
+      }).attr('y', 0)
+      .merge(rect).attr('class', classValue)
+      .attr('data-value', function(d) { return d.value});
       hoursAxis = d3.axisTop(timescale).ticks(d3.timeHour.every(xTicks)).tickFormat(time);
       return hoursg = g.append('g').classed('axis', true).classed('hours', true).classed('labeled', true).attr("transform", "translate(0,-10.5)").call(hoursAxis);
     });

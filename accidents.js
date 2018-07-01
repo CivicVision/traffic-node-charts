@@ -2,6 +2,7 @@ const d3 = require('d3');
 const d3Node = require('d3-node');
 const dayofWeekChart = require('./dow-node');
 const _ = require('lodash');
+const fs = require('fs');
 
 var accidentsPerHour = function(data, newDate) {
   var h;
@@ -24,23 +25,22 @@ var accidentsPerHour = function(data, newDate) {
 nestHour = function(h, newDate, data, valueKey, valueFn) {
   if (!valueFn) {
     valueFn = function(d) { return d[valueKey]; };
-    hourDate = d3.timeHour.offset(newDate, h);
-    entry = _.find(data, function(d) { return parseInt(d.hour) == h});
-    return {
-      "key": hourDate,
-      "value": entry ? valueFn(entry) : 0,
-      "name": valueKey
-    }
+  }
+  hourDate = d3.timeHour.offset(newDate, h);
+  entry = _.find(data, function(d) { return parseInt(d.hour) == h});
+  return {
+    "key": hourDate,
+    "value": entry ? valueFn(entry) : 0,
+    "name": valueKey
   }
 };
 
-module.exports.generate = function (data) {
-    console.log('test')
+module.exports.generate = function (rawData) {
     var dowChartAccidents;
     var newDate = new Date(2016,0,1,0)
-    data = [accidentsPerHour(data, newDate)];
-  
-    maxAccidents = d3.max(data, function(d) {
+    data = [accidentsPerHour(rawData, newDate)];
+
+    maxAccidents = d3.max(rawData, function(d) {
       return parseInt(d.accidents);
     });
     yValue = function(d) { return d.name; };
@@ -50,4 +50,10 @@ module.exports.generate = function (data) {
     var svg = d3n.createSVG(700, 20);
     d3.select(d3n.document.querySelector('#chart')).data([data]).call(dowChartAccidents);
     console.log(d3n.html())
+    fs.writeFile('./accidents.svg', d3n.svgString(), 'utf8', function(err) {
+      if(err) {
+        return console.log(err);
+      }
+      console.log('success')
+    });
 };
