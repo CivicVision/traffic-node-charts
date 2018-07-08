@@ -70,16 +70,7 @@ module.exports = function() {
     };
   };
   mapData = function(data) {
-    var dow, nData;
-    nData = (function() {
-      var j, results;
-      results = [];
-      for (dow = j = 0; j <= 6; dow = ++j) {
-        results.push(nestDate(dow, data));
-      }
-      return results;
-    })();
-    return nData;
+    return data;
   };
   chart = function(selection) {
     return selection.each(function(data, i) {
@@ -89,22 +80,31 @@ module.exports = function() {
       timescale.domain([startDate, d3.timeDay.offset(startDate, 1)]).range([0, cellSize * 24]);
       var svg = d3.select(this).select('svg')
       var svgG = svg.selectAll('g.d').data(data);
-      gEnter = svgG.enter().append('g').attr('class', 'd').merge(svg).attr('width', width).attr('height', height).append('g').attr('transform', "translate(" + weekDayPadding + ", " + paddingDays + ")").attr('class', 'YlOrRd');
+      gEnter = svgG.enter().append('g').attr('class', 'd').merge(svg).attr('width', width).attr('height', height).attr('transform', function(d, i) {
+        return "translate(" + weekDayPadding + ", " + (parseInt(paddingDays)*1+(i*height)) + ")"
+      }).attr('class', 'YlOrRd');
       g = svgG.merge(gEnter);
-      labelText = g.selectAll('text.day-of-week').data(function(d) {
+      labelText = g.selectAll('text.day-of-week').data(function(d, i) {
+        d.index = i;
         return [d];
       });
       labelText.enter().append('text').attr('class', 'day-of-week').attr('transform', "translate(-" + weekDayPadding + ", " + (paddingDays * 2) + ")").text(yValue);
       rect = g.selectAll('.hour').data(function(d) {
         return d.values;
       });
-      rect.enter().append('rect').attr('width', cellSize).attr('height', cellSize).attr('x', function(d) {
+      rect.enter().append('rect').attr('width', cellSize).attr('height', cellSize).attr('x', function(d, i) {
         return hour(d.key) * cellSize;
       }).attr('y', 0)
       .merge(rect).attr('class', classValue)
       .attr('data-value', function(d) { return d.value});
       hoursAxis = d3.axisTop(timescale).ticks(d3.timeHour.every(xTicks)).tickFormat(time);
-      return hoursg = g.append('g').classed('axis', true).classed('hours', true).classed('labeled', true).attr("transform", "translate(0,-10.5)").call(hoursAxis);
+      hoursg = g.append('g').classed('axis', true).classed('hours', true).classed('labeled', true).attr("transform", "translate(0,-10.5)").call(hoursAxis);
+      g.select('g.axis.hours').data(data).classed('hidden', function(d, i) {
+        if (i > 0) {
+          return true;
+        }
+        return false;
+      });
     });
   };
   chart.cellSize = function(value) {
