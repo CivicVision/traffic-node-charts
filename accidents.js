@@ -49,11 +49,5 @@ module.exports.generate = function (rawData) {
     const d3n = new d3Node({selector: '#chart', container: '<div id="container"><div id="chart"></div></div>'});
     var svg = d3n.createSVG(700, 20);
     d3.select(d3n.document.querySelector('#chart')).data([data]).call(dowChartAccidents);
-    console.log(d3n.html())
-    fs.writeFile('./accidents.svg', d3n.svgString(), 'utf8', function(err) {
-      if(err) {
-        return console.log(err);
-      }
-      console.log('success')
-    });
+    return d3n;
 };
