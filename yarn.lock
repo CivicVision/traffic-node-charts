@@ -198,9 +198,9 @@ d3-interpolate@1:
   dependencies:
     d3-color "1"
 
-d3-node@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/d3-node/-/d3-node-2.0.1.tgz#e35f8a5582e7c326ea06ac08eb1108e206eb14a8"
+d3-node@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/d3-node/-/d3-node-2.2.0.tgz#ecd8e3764eab625704995d3fbcc05f8d3f5f1092"
   dependencies:
     d3 "5.4.0"
     jsdom "^9.12.0"
