@@ -13,6 +13,6 @@
     "lodash": "^4.17.10",
     "node-fetch": "^2.1.2",
     "node-fetch-polyfill": "^2.0.6",
-    "promise": "^8.0.1"
+    "promise": "^8.1.0"
   }
 }
