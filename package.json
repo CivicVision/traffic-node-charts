@@ -10,7 +10,7 @@
     "d3-node": "^2.0.1",
     "d3-queue": "^3.0.7",
     "fetch": "^1.1.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.15",
     "node-fetch": "^2.1.2",
     "node-fetch-polyfill": "^2.0.6",
     "promise": "^8.0.1"
